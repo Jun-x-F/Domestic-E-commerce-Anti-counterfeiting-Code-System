@@ -1,0 +1,75 @@
+openapi: 3.0.3
+info:
+  title: SPU Anti-counterfeiting API
+  version: "1.0"
+paths:
+  /api/spu-codes:
+    get:
+      summary: Export SPU codes
+      responses:
+        '200':
+          description: List of codes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SpuCode'
+  /api/spu-codes/ship:
+    post:
+      summary: Upload shipping info
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShippingInfo'
+      responses:
+        '204':
+          description: Written
+  /api/verify:
+    get:
+      summary: Verify code
+      parameters:
+        - in: query
+          name: code
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Verification result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerifyResult'
+components:
+  schemas:
+    SpuCode:
+      type: object
+      properties:
+        spu:
+          type: string
+        channel:
+          type: string
+        code:
+          type: string
+        qr_url:
+          type: string
+    ShippingInfo:
+      type: object
+      properties:
+        code:
+          type: string
+        shipped_at:
+          type: string
+          format: date-time
+    VerifyResult:
+      type: object
+      properties:
+        valid:
+          type: boolean
+        spu:
+          type: string
+        channel:
+          type: string
