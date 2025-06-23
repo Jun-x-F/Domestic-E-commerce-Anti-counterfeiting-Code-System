@@ -1,21 +1,37 @@
+"""Utilities for creating and storing anti-counterfeiting codes."""
+
 import uuid
 import hmac
 import hashlib
 from datetime import datetime
 from typing import Iterable
-from sqlalchemy import (create_engine, MetaData, Table, Column, Integer, String,
-                        DateTime, insert)
+from sqlalchemy import (
+    create_engine,
+    MetaData,
+    Table,
+    Column,
+    Integer,
+    String,
+    DateTime,
+    insert,
+)
 
 
 def generate_code(secret: str) -> str:
-    """Generate a unique code with an HMAC signature."""
+    """Return a single random code signed with ``secret``.
+
+    The code is a UUID4 hex string followed by the first eight characters of an
+    HMAC-SHA256 signature.  This signature allows simple validation on the
+    verification endpoint.
+    """
+
     base = uuid.uuid4().hex
     signature = hmac.new(secret.encode(), base.encode(), hashlib.sha256).hexdigest()[:8]
     return f"{base}{signature}"
 
 
 def init_table(metadata: MetaData) -> Table:
-    """Return the spu_channel_code table definition."""
+    """Create the ``spu_channel_code`` table definition."""
     return Table(
         "spu_channel_code",
         metadata,
@@ -30,8 +46,20 @@ def init_table(metadata: MetaData) -> Table:
     )
 
 
-def generate_codes(spu: str, channel: str, count: int, db_url: str, secret: str) -> Iterable[str]:
-    """Generate multiple codes for an SPU and channel and store them."""
+def generate_codes(
+    spu: str,
+    channel: str,
+    count: int,
+    db_url: str,
+    secret: str,
+) -> Iterable[str]:
+    """Generate ``count`` codes for the given SPU and channel.
+
+    All generated codes are persisted to the database specified by ``db_url``.
+    The function yields the raw codes so that callers can create QR codes or
+    perform further processing.
+    """
+
     engine = create_engine(db_url)
     metadata = MetaData()
     table = init_table(metadata)

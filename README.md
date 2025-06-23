@@ -16,4 +16,11 @@ The Python modules live under `src/anticounterfeiting` and include:
 - `generator.py` – generate codes for each SPU and channel and store them in the database.
 - `tasks.py` – Celery task for rendering QR codes to a NAS path.
 
-Run tests with `pytest` and lint with `ruff`.
+Run the unit tests with `pytest -q` and lint the code using `ruff`.
+
+For a quick demonstration you can run `examples/demo.py`, which generates a
+couple of codes and writes their QR images under the `qrcodes/` directory:
+
+```bash
+python examples/demo.py
+```
