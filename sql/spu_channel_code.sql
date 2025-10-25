@@ -1,0 +1,10 @@
+CREATE TABLE spu_channel_code (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    spu VARCHAR(64) NOT NULL,
+    channel VARCHAR(64) NOT NULL,
+    code VARCHAR(80) NOT NULL UNIQUE,
+    url VARCHAR(255) NOT NULL,
+    qr_path VARCHAR(255),
+    created_at DATETIME NOT NULL,
+    updated_at DATETIME NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
